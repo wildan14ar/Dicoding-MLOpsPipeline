@@ -1,13 +1,26 @@
-FROM tensorflow/serving:latest
+FROM python:3.10-slim
 
-COPY ./pipeline_output/serving_model /models/sa-model
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-ENV MODEL_NAME=sa-model
-ENV PORT=8501
+# Set working directory
+WORKDIR /app
 
-RUN echo '#!/bin/bash \n\n\
-env \n\
-tensorflow_model_server --port=8500 --rest_api_port=${PORT} \
---model_name=${MODEL_NAME} --model_base_path=${MODEL_BASE_PATH}/${MODEL_NAME} \
-"$@"' > /usr/bin/tf_serving_entrypoint.sh \
-&& chmod +x /usr/bin/tf_serving_entrypoint.sh  
+# Copy all project files
+COPY . .
+
+# Install Python dependencies
+RUN pip install --upgrade pip \
+ && pip install -r requirements.txt
+
+# Set environment variable for model path
+ENV SERVING_MODEL_DIR=wildan14ar-pipeline/serving_model/1748013612
+
+# Expose port (Railway uses $PORT)
+EXPOSE 8080
+
+# Start Flask app via Gunicorn
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:8080"]
