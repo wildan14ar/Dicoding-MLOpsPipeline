@@ -1,0 +1,15 @@
+tfx
+tensorflow
+apache-beam[gcp]
+protobuf
+pyarrow
+pandas
+numpy
+matplotlib
+scikit-learn
+jupyter
+keras-tuner 
+prometheus_client
+Flask
+gunicorn
+prometheus-client

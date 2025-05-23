@@ -1,0 +1,18 @@
+# Submission 2: Analisis Sentimen Tweet untuk Deteksi Depresi
+
+**Nama**: Wildan Abdurrasyid
+
+**Username dicoding**: wildan14ar
+
+|                 | Deskripsi                                                                                                                               |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| **Dataset**     | [Twitter Sentiment](https://www.kaggle.com/datasets/gargmanas/sentimental-analysis-for-tweets) - Kumpulan 20.000 tweet dengan label biner (0=tidak depresi, 1=depresi) untuk analisis sentimen terkait depresi. |
+| **Masalah**     | Mengklasifikasikan konten tweet untuk mendeteksi indikasi depresi secara otomatis. Analisis manual tidak efisien untuk volume data besar, sehingga diperlukan solusi otomatis untuk mendukung deteksi dini masalah kesehatan mental melalui media sosial. |
+| **Solusi machine learning** | Membangun pipeline Machine Learning end-to-end menggunakan TensorFlow Extended (TFX) untuk mengotomatisasi proses mulai dari ingesti data, validasi, preprocessing teks, pelatihan model klasifikasi, evaluasi, hingga deployment model yang tervalidasi. |
+| **Metode pengolahan** | Menerapkan preprocessing teks standar seperti lowercasing dan tokenisasi. Melakukan validasi skema dan anomali data menggunakan `SchemaGen` dan `ExampleValidator`. Data dibagi menjadi set pelatihan dan evaluasi dengan rasio 2:1 menggunakan `CsvExampleGen`. Fitur teks dinormalisasi dan diubah menjadi representasi numerik (vektor ID token) yang sesuai untuk model neural network menggunakan komponen TFX `Transform`. |
+| **Arsitektur model** | Menggunakan model Sequential Neural Network (DNN) dengan lapisan Embedding untuk menangkap representasi semantik kata dan lapisan Dense untuk melakukan klasifikasi biner pada teks tweet, dilatih menggunakan komponen TFX `Trainer`. |
+| **Metrik evaluasi** | Mengevaluasi performa model klasifikasi menggunakan metrik standar seperti Accuracy, Precision, dan Recall melalui komponen TFX `Evaluator` untuk memastikan keandalan model dalam mengidentifikasi tweet terkait depresi. |
+| **Performa model** | Model yang dihasilkan oleh pipeline TFX menunjukkan performa yang sangat baik pada tugas klasifikasi sentimen tweet. Berdasarkan output komponen `Trainer`, model mencapai akurasi validasi sekitar **98.9%** setelah beberapa epoch pelatihan. Komponen `Evaluator` juga memvalidasi model ini sebelum diputuskan untuk di-*push* ke direktori *serving*. |
+| Opsi deployment | Model disimpan dan disajikan menggunakan Flask REST API di atas TensorFlow SavedModel. Model dapat di-serve di berbagai environment seperti lokal, Docker container, atau layanan cloud (Heroku, GCP, dll). Endpoint utama adalah /predict, /healthz, dan /metrics untuk integrasi Prometheus. |
+| Web app | Akses model serving tersedia di tautan berikut: sentiment-analysis. Endpoint /predict menerima permintaan POST dengan format {"instances": [{"text": "your input"}]} dan mengembalikan prediksi sentimen. [nama-model](https://model-resiko-kredit.herokuapp.com/v1/models/model-resiko-kredit/metadata)|
+| Monitoring | 	Model serving telah diintegrasikan dengan Prometheus untuk memantau jumlah permintaan (prediction_requests_total) dan latensi (prediction_latency_seconds). Grafana digunakan untuk membuat dashboard metrik real-time. Metrik menunjukkan latency stabil <100ms dan tidak ada error 5xx saat pengujian. |

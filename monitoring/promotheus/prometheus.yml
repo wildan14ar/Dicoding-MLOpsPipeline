@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+
+scrape_configs:
+  # Scrape REST API Flask
+  - job_name: 'rest_api'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['flask-host:5000']
+
+  # Scrape Pushgateway (TFX pipeline)
+  - job_name: 'tfx_pipeline'
+    honor_labels: true
+    static_configs:
+      - targets: ['pushgateway-host:9091']
